@@ -1,0 +1,21 @@
+# Python virtual environment
+venv/
+
+# Python compiled files
+__pycache__/
+*.pyc
+*.pyo
+
+# Logs and database
+*.log
+*.sqlite3
+*.db
+
+# Ignore environment variables
+.env
+
+# VS Code settings
+.vscode/
+
+# Ignore Python dependencies
+*.egg-info/
