@@ -1,7 +1,10 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from app import auth, utils, database
-from app.admin import schemas, models
+from app.admin import schemas, models  # Ensure schemas and models are imported
+import logging
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter(
     prefix="/admin",
@@ -23,13 +26,15 @@ def register_admin(admin: schemas.AdminCreate, db: Session = Depends(database.ge
     return new_admin
 
 # ✅ Admin login route
-@router.post("/login")
+@router.post("/login", response_model=schemas.AdminLoginResponse)
 def login_admin(admin: schemas.AdminLogin, db: Session = Depends(database.get_db)):
     db_admin = db.query(models.Admin).filter(models.Admin.email == admin.email).first()
     if not db_admin:
+        logger.warning(f"Login failed for email: {admin.email} - Admin not found")
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid credentials")
 
     if not utils.verify_password(admin.password, db_admin.password):
+        logger.warning(f"Login failed for email: {admin.email} - Incorrect password")
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid credentials")
 
     access_token = auth.create_access_token(data={"sub": db_admin.email, "role": "admin"})
