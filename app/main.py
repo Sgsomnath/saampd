@@ -1,5 +1,6 @@
 from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
+
 from app.core.config.settings import settings
 from app.core.database.session import engine
 from app.core.models.base import Base
@@ -10,6 +11,7 @@ from jwt_auth.dependencies import verify_token
 from app.admin.router import router as admin_router
 from app.distributor.router import router as distributor_router
 from app.investor.router import router as investor_router
+from app.admin.dashboard_router import router as dashboard_router  # ✅ Admin dashboard router
 
 # FastAPI instance
 app = FastAPI(
@@ -21,7 +23,7 @@ app = FastAPI(
 # CORS Middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # ✅ Production এ অবশ্যই নির্দিষ্ট origin দেবে
+    allow_origins=["*"],  # ✅ In production, use specific origins only!
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -46,3 +48,4 @@ def secure_test():
 app.include_router(admin_router, prefix="/admin", tags=["Admin"])
 app.include_router(distributor_router, prefix="/distributor", tags=["Distributor"])
 app.include_router(investor_router, prefix="/investor", tags=["Investor"])
+app.include_router(dashboard_router)  # ✅ Admin dashboard routes

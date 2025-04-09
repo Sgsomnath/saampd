@@ -1,15 +1,13 @@
-from .user import User
-from .distributor import Distributor
-from .admin import Admin
-from .investor import Investor
-from .transaction import Transaction
-from .scheme import Scheme  # নতুন লাইন
+# init_db.py
 
-__all__ = [
-    "User",
-    "Distributor",
-    "Admin",
-    "Investor",
-    "Transaction",
-    "Scheme",
-]
+from app.core.database.base import Base
+from app.core.database.session import engine
+from app.core.models import *  # সব মডেল একসাথে import হচ্ছে
+
+def init_db():
+    print("📦 Initializing database and creating tables...")
+    Base.metadata.create_all(bind=engine)
+    print("✅ All tables created successfully.")
+
+if __name__ == "__main__":
+    init_db()
