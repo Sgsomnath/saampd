@@ -6,7 +6,7 @@
 - [ ] Admin Login (JWT token)
 - [ ] Admin Dashboard API
 - [ ] View Distributors
-- [ ] Add Clients Manually
+- [ ] Add investors Manually
 
 ...
 

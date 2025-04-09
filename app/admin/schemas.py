@@ -20,7 +20,7 @@ class AdminResponse(BaseModel):
     email: EmailStr
 
     class Config:
-        from_attributes = True  # Updated for Pydantic v2
+        from_attributes = True  # Updated for Pydantic v2 compatibility
 
 # Output schema for admin login response
 class AdminLoginResponse(BaseModel):
