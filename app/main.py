@@ -1,3 +1,5 @@
+# app/main.py
+
 from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -12,6 +14,9 @@ from app.admin.router import router as admin_router
 from app.distributor.router import router as distributor_router
 from app.investor.router import router as investor_router
 from app.admin.dashboard_router import router as dashboard_router  # ✅ Admin dashboard router
+from app.distributor.dashboard_router import router as distributor_dashboard_router  # ✅ Distributor dashboard router
+from app.investor.dashboard_router import router as investor_dashboard_router  # ✅ Investor dashboard router
+from app.investor.profile_router import router as investor_profile_router
 
 # FastAPI instance
 app = FastAPI(
@@ -48,4 +53,7 @@ def secure_test():
 app.include_router(admin_router, prefix="/admin", tags=["Admin"])
 app.include_router(distributor_router, prefix="/distributor", tags=["Distributor"])
 app.include_router(investor_router, prefix="/investor", tags=["Investor"])
-app.include_router(dashboard_router)  # ✅ Admin dashboard routes
+app.include_router(dashboard_router)  # ✅ Admin dashboard
+app.include_router(distributor_dashboard_router)  # ✅ Distributor dashboard
+app.include_router(investor_dashboard_router)  # ✅ Investor dashboard
+app.include_router(investor_profile_router)

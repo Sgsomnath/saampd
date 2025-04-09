@@ -2,7 +2,13 @@
 
 from app.core.database.base import Base
 from app.core.database.session import engine
-from app.core.models import *  # সব মডেল একসাথে import হচ্ছে
+
+# ✅ Explicit imports to register models with SQLAlchemy metadata
+from app.core.models.admin import Admin
+from app.core.models.distributor import Distributor
+from app.core.models.investor import Investor
+from app.core.models.scheme import Scheme
+from app.core.models.transaction import Transaction
 
 def init_db():
     print("📦 Initializing database and creating tables...")

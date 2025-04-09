@@ -9,8 +9,11 @@ class Investor(Base):
     name = Column(String, nullable=False)
     email = Column(String, unique=True, index=True, nullable=False)
     mobile = Column(String, nullable=False)
-    pan = Column(String, unique=True, nullable=True)  # PAN for KYC
-    kyc_status = Column(String, default="Pending")    # e.g., Pending, Verified
+    dob = Column(String, nullable=True)                      # ✅ নতুন ফিল্ড
+    pan = Column(String, unique=True, nullable=True)
+    kyc_status = Column(String, default="Pending")
+    fatca_status = Column(String, default="Pending")         # ✅ নতুন ফিল্ড
+    nomination_status = Column(String, default="Not Added")  # ✅ নতুন ফিল্ড
     hashed_password = Column(String, nullable=False)
     is_active = Column(Boolean, default=True)
     created_at = Column(DateTime, default=datetime.utcnow)
