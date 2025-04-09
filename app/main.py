@@ -1,31 +1,48 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends
+from fastapi.middleware.cors import CORSMiddleware
 from app.core.config.settings import settings
 from app.core.database.session import engine
 from app.core.models.base import Base
 
-# Routers import
+from jwt_auth.dependencies import verify_token
+
+# Routers
 from app.admin.router import router as admin_router
 from app.distributor.router import router as distributor_router
 from app.investor.router import router as investor_router
 
-# Create FastAPI instance
+# FastAPI instance
 app = FastAPI(
     title=settings.app_name,
     description="Mutual Fund Corporate Distributor App for STARSAAMPD MF DISTRIBUTORS LLP",
     version="1.0.0"
 )
 
-# Create all database tables on startup
+# CORS Middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # ✅ Production এ অবশ্যই নির্দিষ্ট origin দেবে
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# DB auto-create on startup
 @app.on_event("startup")
 def on_startup():
     Base.metadata.create_all(bind=engine)
 
-# Root endpoint
+# Root Route
 @app.get("/")
-def read_root():
-    return {"message": "HELLO STARSAAMPD MF DISTRIBUTORS LLP!"}
+def root():
+    return {"message": "SAAMPD API is running"}
 
-# Include routers
+# JWT-Protected Route (for testing)
+@app.get("/secure-test", dependencies=[Depends(verify_token)])
+def secure_test():
+    return {"message": "✅ Token valid. Secure access granted!"}
+
+# Register Routers
 app.include_router(admin_router, prefix="/admin", tags=["Admin"])
 app.include_router(distributor_router, prefix="/distributor", tags=["Distributor"])
 app.include_router(investor_router, prefix="/investor", tags=["Investor"])
