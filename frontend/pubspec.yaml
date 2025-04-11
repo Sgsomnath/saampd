@@ -1,0 +1,27 @@
+name: frontend
+description: Mutual Fund Corporate Distributor App frontend for STARSAAMPD
+publish_to: "none"
+version: 1.0.0+1
+
+environment:
+  sdk: ">=3.1.0 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.2
+  http: ^0.13.6       # ✅ API call এর জন্য
+  provider: ^6.1.1    # ✅ State management (future scalability)
+  shared_preferences: ^2.2.1  # ✅ Token/local data save করার জন্য
+  intl: ^0.18.1       # ✅ Date formatting
+  flutter_svg: ^2.0.9 # ✅ SVG asset support (icons etc.)
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/images/logo.png       # ✅ যদি future এ কোন image asset রাখেন

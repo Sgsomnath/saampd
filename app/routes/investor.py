@@ -1,10 +1,10 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-from app.jwt_auth import password_handler
+from app.jwt_auth import password_handler  # type: ignore
 from app.auth import create_access_token
 from app.core.database.session import get_db
 from app.core.models.investor import Investor
-from app.model.schemas import InvestorCreate, InvestorLogin, InvestorResponse
+from app.investor.schemas import InvestorCreate, InvestorLogin, InvestorResponse  # Corrected import
 
 investor_router = APIRouter(prefix="/investor", tags=["Investor"])
 

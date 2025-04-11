@@ -15,20 +15,14 @@ class InvestorLogin(BaseModel):
     password: str
 
 
-# 🔹 Output schema for investor details (after register/login)
+# 🔹 Output schema after registration/login
 class InvestorResponse(BaseModel):
     id: int
     name: str
     email: EmailStr
-    mobile: Optional[str] = None
-    dob: Optional[str] = None
-    pan: Optional[str] = None
-    kyc_status: Optional[str] = None
-    fatca_status: Optional[str] = None
-    nomination_status: Optional[str] = None
 
     class Config:
-        from_attributes = True  # ORM to Pydantic conversion
+        from_attributes = True  # Pydantic v2 compatible
 
 
 # 🔹 Output schema for login response with JWT
@@ -63,3 +57,20 @@ class InvestorProfile(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+# 🔐 Change password schema
+class ChangePasswordRequest(BaseModel):
+    old_password: str
+    new_password: str
+
+
+# 🔄 KYC/FATCA update schema
+class KYCStatusUpdate(BaseModel):
+    kyc_status: Optional[str]
+    fatca_status: Optional[str]
+
+
+# 🧾 Nominee info update schema
+class NomineeUpdate(BaseModel):
+    nomination_status: str
