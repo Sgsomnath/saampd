@@ -24,7 +24,7 @@ from app.distributor.report_router import router as distributor_report_router
 from app.distributor.document_router import router as distributor_document_router
 from app.distributor.message_router import router as distributor_message_router
 from app.distributor.twofa_router import router as distributor_twofa_router
-
+from app.distributor.commission_chart_router import router as commission_chart_router
 
 # 🔹 Investor Features
 from app.investor.profile_router import router as investor_profile_router
@@ -83,6 +83,7 @@ app.include_router(distributor_commission_router)
 app.include_router(distributor_report_router)
 app.include_router(distributor_document_router)
 app.include_router(distributor_message_router)
+app.include_router(commission_chart_router)
 app.include_router(distributor_twofa_router)  # ✅ /distributor/2fa/send-otp
 
 # Investor
