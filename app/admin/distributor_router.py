@@ -1,3 +1,5 @@
+# app/admin/distributor_router.py
+
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 from app.core.database.session import get_db
@@ -64,7 +66,7 @@ def view_distributor(
         "last_login": distributor.last_login
     }
 
-# 🔒 Block / Unblock distributor
+# 🔒 Block or Unblock a distributor
 @router.put("/toggle-status/{distributor_id}")
 def toggle_distributor_status(
     distributor_id: int,
@@ -81,4 +83,21 @@ def toggle_distributor_status(
     db.commit()
 
     status = "unblocked" if distributor.is_active else "blocked"
-    return {"message": f"Distributor has been {status} successfully."}
+    return {"message": f"✅ Distributor has been {status} successfully."}
+
+# 🗑️ Delete distributor
+@router.delete("/delete/{distributor_id}")
+def delete_distributor(
+    distributor_id: int,
+    db: Session = Depends(get_db),
+    current_user: dict = Depends(verify_token)
+):
+    verify_admin_access(current_user)
+
+    distributor = db.query(Distributor).filter(Distributor.id == distributor_id).first()
+    if not distributor:
+        raise HTTPException(status_code=404, detail="Distributor not found")
+
+    db.delete(distributor)
+    db.commit()
+    return {"message": "🗑️ Distributor deleted successfully"}
