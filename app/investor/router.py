@@ -22,7 +22,6 @@ router = APIRouter(
     tags=["Investor"]
 )
 
-
 # ✅ Investor Home
 @router.get("/")
 def investor_home():
@@ -35,16 +34,27 @@ def register_investor(
     investor: InvestorCreate,
     db: Session = Depends(get_db)
 ):
-    existing = db.query(Investor).filter(Investor.email == investor.email).first()
-    if existing:
-        raise HTTPException(status_code=400, detail="Investor with this email already exists.")
-    
+    # 🔐 Email, mobile & PAN must be unique
+    if db.query(Investor).filter(Investor.email == investor.email).first():
+        raise HTTPException(status_code=400, detail="Email already registered")
+    if db.query(Investor).filter(Investor.mobile == investor.mobile).first():
+        raise HTTPException(status_code=400, detail="Mobile number already in use")
+    if db.query(Investor).filter(Investor.pan == investor.pan).first():
+        raise HTTPException(status_code=400, detail="PAN already exists")
+
     hashed_password = get_password_hash(investor.password)
 
     new_investor = Investor(
         name=investor.name,
         email=investor.email,
-        hashed_password=hashed_password
+        password=investor.password,
+        hashed_password=hashed_password,
+        mobile=investor.mobile,
+        dob=investor.dob,
+        gender=investor.gender,
+        pan=investor.pan,
+        aadhar=investor.aadhar,
+        address=investor.address
     )
     db.add(new_investor)
     db.commit()
@@ -66,7 +76,7 @@ def login_investor(
         raise HTTPException(status_code=401, detail="Incorrect password")
 
     token = create_access_token(data={"sub": str(db_investor.id), "role": "investor"})
-    
+
     return {
         "access_token": token,
         "token_type": "bearer"

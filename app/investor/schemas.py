@@ -1,12 +1,26 @@
-from pydantic import BaseModel, EmailStr
-from typing import Optional
+from pydantic import BaseModel, EmailStr, Field
+from typing import Optional, Annotated
+from datetime import date
 
 
 # 🔹 Input schema for investor registration
 class InvestorCreate(BaseModel):
     name: str
+    date_of_birth: date
+    gender: Annotated[str, Field(pattern="^(male|female)$")]
+    mobile: Annotated[str, Field(pattern="^\d{10}$")]
+    pan_number: str
+    aadhar_number: str
     email: EmailStr
     password: str
+
+    # Address details
+    village_or_town: str
+    landmark: str
+    house_number: str
+    district: str
+    state: str
+    country: str
 
 
 # 🔹 Input schema for investor login
@@ -20,9 +34,10 @@ class InvestorResponse(BaseModel):
     id: int
     name: str
     email: EmailStr
+    mobile: Optional[str] = None
 
     class Config:
-        from_attributes = True  # Pydantic v2 compatible
+        from_attributes = True
 
 
 # 🔹 Output schema for login response with JWT
@@ -36,8 +51,16 @@ class InvestorProfileUpdate(BaseModel):
     name: Optional[str]
     email: Optional[EmailStr]
     mobile: Optional[str]
-    dob: Optional[str]
-    pan: Optional[str]
+    date_of_birth: Optional[date]
+    gender: Optional[str]
+    pan_number: Optional[str]
+    aadhar_number: Optional[str]
+    village_or_town: Optional[str]
+    landmark: Optional[str]
+    house_number: Optional[str]
+    district: Optional[str]
+    state: Optional[str]
+    country: Optional[str]
     kyc_status: Optional[str]
     fatca_status: Optional[str]
     nomination_status: Optional[str]
@@ -48,12 +71,20 @@ class InvestorProfile(BaseModel):
     id: int
     name: str
     email: EmailStr
-    mobile: Optional[str] = None
-    dob: Optional[str] = None
-    pan: Optional[str] = None
-    kyc_status: Optional[str] = None
-    fatca_status: Optional[str] = None
-    nomination_status: Optional[str] = None
+    mobile: Optional[str]
+    date_of_birth: Optional[date]
+    gender: Optional[str]
+    pan_number: Optional[str]
+    aadhar_number: Optional[str]
+    village_or_town: Optional[str]
+    landmark: Optional[str]
+    house_number: Optional[str]
+    district: Optional[str]
+    state: Optional[str]
+    country: Optional[str]
+    kyc_status: Optional[str]
+    fatca_status: Optional[str]
+    nomination_status: Optional[str]
 
     class Config:
         from_attributes = True
