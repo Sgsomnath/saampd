@@ -14,7 +14,8 @@ from app.investor.router import router as investor_router
 
 # 🔹 Admin Routers
 from app.admin.dashboard_router import router as dashboard_router
-from app.admin.distributor_router import router as admin_distributor_router  # ✅ NEW
+from app.admin.distributor_router import router as admin_distributor_router 
+from app.admin.investor_router import router as admin_investor_router # ✅ NEW
 
 # 🔹 Distributor Routers
 from app.distributor.dashboard_router import router as distributor_dashboard_router
@@ -71,6 +72,7 @@ def secure_test():
 app.include_router(admin_router, prefix="/admin", tags=["Admin"])
 app.include_router(dashboard_router)  # Admin Dashboard
 app.include_router(admin_distributor_router)  # ✅ Admin can view distributors
+app.include_router(admin_investor_router)
 
 # Distributor
 app.include_router(distributor_router, prefix="/distributor", tags=["Distributor"])
