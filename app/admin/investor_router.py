@@ -7,7 +7,7 @@ from app.admin.auth_dependency import verify_admin_access  # 🛡️ Admin-only
 
 router = APIRouter(prefix="/admin/investors", tags=["Admin - Investors"])
 
-# 🔍 Get all / Search Investors
+# 🔍 All / Search Investors
 @router.get("/")
 def get_all_investors(
     keyword: str = Query(None),
@@ -39,9 +39,9 @@ def get_all_investors(
         for i in investors
     ]
 
-# 👁️ Get single investor
+# 👁️ Full View of Single Investor
 @router.get("/view/{investor_id}")
-def get_single_investor(
+def get_full_investor(
     investor_id: int,
     db: Session = Depends(get_db),
     current_user: dict = Depends(verify_token)
@@ -58,10 +58,18 @@ def get_single_investor(
         "email": investor.email,
         "mobile": investor.mobile,
         "is_active": investor.is_active,
-        "created_at": investor.created_at
+        "created_at": investor.created_at,
+        "avatar_url": investor.avatar_url,
+        "address": investor.address,
+        "pan": investor.pan,
+        "aadhar": investor.aadhar,
+        "dob": investor.dob,
+        "kyc_status": investor.kyc_status,
+        "fatca_status": investor.fatca_status,
+        "nominee_name": investor.nominee_name
     }
 
-# 🔒 Block investor
+# 🚫 Block Investor
 @router.put("/block/{investor_id}")
 def block_investor(
     investor_id: int,
@@ -78,7 +86,7 @@ def block_investor(
     db.commit()
     return {"message": "🚫 Investor blocked"}
 
-# ✅ Unblock investor
+# ✅ Unblock Investor
 @router.put("/unblock/{investor_id}")
 def unblock_investor(
     investor_id: int,
@@ -95,7 +103,7 @@ def unblock_investor(
     db.commit()
     return {"message": "✅ Investor unblocked"}
 
-# 🗑️ Delete investor
+# 🗑️ Delete Investor
 @router.delete("/delete/{investor_id}")
 def delete_investor(
     investor_id: int,

@@ -7,15 +7,26 @@ from app.admin.auth_dependency import verify_admin_access  # 🔐 Admin-only acc
 
 router = APIRouter(prefix="/admin/distributors", tags=["Admin - Distributors"])
 
-# 🔹 Get all distributors
+# 🔍 Get all or search distributors
 @router.get("/")
 def get_all_distributors(
+    keyword: str = Query(None),
     db: Session = Depends(get_db),
     current_user: dict = Depends(verify_token)
 ):
     verify_admin_access(current_user)
 
-    distributors = db.query(Distributor).all()
+    query = db.query(Distributor)
+    if keyword:
+        keyword = f"%{keyword.lower()}%"
+        query = query.filter(
+            Distributor.name.ilike(keyword) |
+            Distributor.email.ilike(keyword) |
+            Distributor.mobile.ilike(keyword)
+        )
+
+    distributors = query.order_by(Distributor.created_at.desc()).all()
+
     return [
         {
             "id": d.id,
@@ -28,7 +39,7 @@ def get_all_distributors(
         for d in distributors
     ]
 
-# 🔹 View single distributor by ID
+# 👁️ View full details of a distributor
 @router.get("/view/{distributor_id}")
 def view_distributor(
     distributor_id: int,
@@ -40,44 +51,20 @@ def view_distributor(
     distributor = db.query(Distributor).filter(Distributor.id == distributor_id).first()
     if not distributor:
         raise HTTPException(status_code=404, detail="Distributor not found")
-    
+
     return {
         "id": distributor.id,
         "name": distributor.name,
         "email": distributor.email,
         "mobile": distributor.mobile,
         "is_active": distributor.is_active,
-        "created_at": distributor.created_at
+        "created_at": distributor.created_at,
+        "avatar_url": distributor.avatar_url,
+        "payout_details": distributor.payout_details,
+        "last_login": distributor.last_login
     }
 
-# 🔹 Search distributors
-@router.get("/search")
-def search_distributors(
-    keyword: str = Query(..., min_length=1),
-    db: Session = Depends(get_db),
-    current_user: dict = Depends(verify_token)
-):
-    verify_admin_access(current_user)
-
-    results = db.query(Distributor).filter(
-        (Distributor.name.ilike(f"%{keyword}%")) |
-        (Distributor.email.ilike(f"%{keyword}%")) |
-        (Distributor.mobile.ilike(f"%{keyword}%"))
-    ).all()
-
-    return [
-        {
-            "id": d.id,
-            "name": d.name,
-            "email": d.email,
-            "mobile": d.mobile,
-            "is_active": d.is_active,
-            "created_at": d.created_at
-        }
-        for d in results
-    ]
-
-# 🔹 Block / Unblock Distributor
+# 🔒 Block / Unblock distributor
 @router.put("/toggle-status/{distributor_id}")
 def toggle_distributor_status(
     distributor_id: int,
