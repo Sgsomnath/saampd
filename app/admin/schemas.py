@@ -1,5 +1,3 @@
-# app/admin/schemas.py
-
 from pydantic import BaseModel, EmailStr
 
 
@@ -8,6 +6,7 @@ class AdminCreate(BaseModel):
     name: str
     email: EmailStr
     password: str
+    mobile: str  # ✅ Required mobile field
 
 
 # ✅ Input schema for admin login
@@ -16,14 +15,15 @@ class AdminLogin(BaseModel):
     password: str
 
 
-# ✅ Output schema for admin details
+# ✅ Output schema for admin profile/details
 class AdminResponse(BaseModel):
     id: int
     name: str
     email: EmailStr
+    mobile: str
 
     class Config:
-        from_attributes = True  # Pydantic v2 compatibility
+        from_attributes = True  # ORM compatibility
 
 
 # ✅ Output schema for JWT token after login

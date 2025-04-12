@@ -10,8 +10,8 @@ router = APIRouter(
     tags=["Investor Dashboard"]
 )
 
-# ✅ Logout All Devices (Mock version)
-@router.post("/logout")
+# ✅ Logout All Devices (Mock version) with custom operation_id
+@router.post("/logout", operation_id="logout_all_devices_investor_dashboard")
 def logout_all_devices(
     db: Session = Depends(get_db),
     current_investor: dict = Depends(verify_token)

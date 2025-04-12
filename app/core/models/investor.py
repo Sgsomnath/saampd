@@ -9,10 +9,10 @@ class Investor(Base):
     name = Column(String, nullable=False)
     email = Column(String, unique=True, index=True, nullable=False)
     mobile = Column(String, nullable=False)
-    dob = Column(String, nullable=True)  # Format: YYYY-MM-DD
-    gender = Column(String, nullable=True)  # "male" or "female"
-    pan = Column(String, unique=True, nullable=True)
-    aadhar = Column(String, unique=True, nullable=True)
+    date_of_birth = Column(String, nullable=True)  # Keeps the String format for now
+    gender = Column(String, nullable=True)
+    pan_number = Column(String, unique=True, nullable=True)
+    aadhar_number = Column(String, unique=True, nullable=True)
 
     # Address fields
     village_or_town = Column(String, nullable=True)
