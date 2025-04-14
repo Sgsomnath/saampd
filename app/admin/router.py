@@ -1,20 +1,15 @@
-# app/admin/routes.py
-
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
-# ✅ JWT/Auth import (from root-level jwt_auth/)
 from jwt_auth.token_handler import create_access_token
 from jwt_auth.password_handler import get_password_hash, verify_password
 from jwt_auth.dependencies import verify_token
 
-# ✅ Database & Admin schema/model
 from app.core.database.session import get_db
-from app.admin.models import Admin
+from app.core.models.admin import Admin
 from app.admin.schemas import AdminCreate, AdminResponse, AdminLogin, AdminLoginResponse
 
 router = APIRouter(prefix="/admin", tags=["Admin"])
-
 
 # ✅ Admin Home (Protected Route)
 @router.get("/", response_model=dict)
@@ -33,18 +28,28 @@ def register_admin(admin: AdminCreate, db: Session = Depends(get_db)):
         )
 
     hashed_password = get_password_hash(admin.password)
-    new_admin = Admin(name=admin.name, email=admin.email, password=hashed_password)
+    new_admin = Admin(
+        name=admin.name,
+        email=admin.email,
+        hashed_password=hashed_password,
+        phone_number=admin.mobile
+    )
     db.add(new_admin)
     db.commit()
     db.refresh(new_admin)
-    return new_admin
+    return AdminResponse(
+        id=new_admin.id,
+        name=new_admin.name,
+        email=new_admin.email,
+        mobile=new_admin.phone_number
+    )
 
 
 # ✅ Login Admin
 @router.post("/login", response_model=AdminLoginResponse)
 def login_admin(admin: AdminLogin, db: Session = Depends(get_db)):
     db_admin = db.query(Admin).filter(Admin.email == admin.email).first()
-    if not db_admin or not verify_password(admin.password, db_admin.password):
+    if not db_admin or not verify_password(admin.password, db_admin.hashed_password):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid credentials")
 
     token_data = {"sub": str(db_admin.id), "role": "admin"}

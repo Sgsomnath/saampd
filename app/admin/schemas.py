@@ -1,4 +1,4 @@
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, Field
 
 
 # ✅ Input schema for admin registration
@@ -6,7 +6,7 @@ class AdminCreate(BaseModel):
     name: str
     email: EmailStr
     password: str
-    mobile: str  # ✅ Required mobile field
+    mobile: str  # user will submit this as 'mobile'
 
 
 # ✅ Input schema for admin login
@@ -20,10 +20,11 @@ class AdminResponse(BaseModel):
     id: int
     name: str
     email: EmailStr
-    mobile: str
+    phone_number: str = Field(..., alias="mobile")  # map DB's phone_number to mobile
 
     class Config:
-        from_attributes = True  # ORM compatibility
+        orm_mode = True
+        allow_population_by_field_name = True  # allows `mobile` as field name in output
 
 
 # ✅ Output schema for JWT token after login

@@ -1,5 +1,3 @@
-# app/investor/router.py
-
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from app.core.database.dependency import get_db
@@ -39,7 +37,7 @@ def register_investor(
         raise HTTPException(status_code=400, detail="Email already registered")
     if db.query(Investor).filter(Investor.mobile == investor.mobile).first():
         raise HTTPException(status_code=400, detail="Mobile number already in use")
-    if db.query(Investor).filter(Investor.pan == investor.pan).first():
+    if db.query(Investor).filter(Investor.pan_number == investor.pan_number).first():
         raise HTTPException(status_code=400, detail="PAN already exists")
 
     hashed_password = get_password_hash(investor.password)
@@ -47,14 +45,22 @@ def register_investor(
     new_investor = Investor(
         name=investor.name,
         email=investor.email,
-        password=investor.password,
         hashed_password=hashed_password,
         mobile=investor.mobile,
-        dob=investor.dob,
+        date_of_birth=investor.date_of_birth,
         gender=investor.gender,
-        pan=investor.pan,
-        aadhar=investor.aadhar,
-        address=investor.address
+        pan_number=investor.pan_number,
+        aadhar_number=investor.aadhar_number,
+        village_or_town=investor.village_or_town,
+        landmark=investor.landmark,
+        house_number=investor.house_number,
+        district=investor.district,
+        state=investor.state,
+        country=investor.country,
+        kyc_status="Pending",  # ডিফল্ট মান যোগ করা হয়েছে
+        fatca_status="Pending", # ডিফল্ট মান যোগ করা হয়েছে
+        nomination_status="Not Added", # ডিফল্ট মান যোগ করা হয়েছে
+        is_active=True,
     )
     db.add(new_investor)
     db.commit()
